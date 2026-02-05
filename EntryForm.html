@@ -233,6 +233,23 @@
     .remove-task-btn:hover {
       background: #c82333;
     }
+    .duplicate-task-btn {
+      background: #17a2b8;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      margin-right: 5px;
+    }
+    .duplicate-task-btn:hover {
+      background: #138496;
+    }
+    .task-header-buttons {
+      display: flex;
+      gap: 5px;
+    }
     .add-person-btn, .add-task-btn, .refresh-hours-btn {
       background: #28a745;
       color: white;
@@ -619,7 +636,10 @@
       taskDiv.innerHTML =
         '<div class="task-item-header">' +
           '<span class="task-number">Task ' + taskId + '</span>' +
-          '<button type="button" class="remove-task-btn" onclick="removeTaskItem(' + taskId + ')">Remove</button>' +
+          '<div class="task-header-buttons">' +
+            '<button type="button" class="duplicate-task-btn" onclick="duplicateTaskItem(' + taskId + ')">Duplicate</button>' +
+            '<button type="button" class="remove-task-btn" onclick="removeTaskItem(' + taskId + ')">Remove</button>' +
+          '</div>' +
         '</div>' +
         '<input type="text" class="task-name" placeholder="Task or Deliverable Name" required>' +
         '<div class="task-dates">' +
@@ -681,6 +701,125 @@
       } else {
         showMessage('You must have at least one task/deliverable', 'error');
       }
+    }
+
+    function duplicateTaskItem(sourceTaskId) {
+      var sourceTaskDiv = document.querySelector('.task-item[data-task-id="' + sourceTaskId + '"]');
+      if (!sourceTaskDiv) {
+        showMessage('Could not find task to duplicate', 'error');
+        return;
+      }
+
+      // Get values from source task
+      var sourceName = sourceTaskDiv.querySelector('.task-name').value;
+      var sourceStartDate = sourceTaskDiv.querySelector('.task-start-date').value;
+      var sourceEndDate = sourceTaskDiv.querySelector('.task-end-date').value;
+      var sourceYears = getSelectedYearsForTask(sourceTaskId);
+
+      // Get custom year dates if they exist
+      var customDates = document.getElementById('customDatesToggle').checked;
+      var sourceYearDates = {};
+      if (customDates) {
+        for (var i = 0; i < sourceYears.length; i++) {
+          var year = sourceYears[i];
+          var startInput = sourceTaskDiv.querySelector('.year-start-date[data-year="' + year + '"]');
+          var endInput = sourceTaskDiv.querySelector('.year-end-date[data-year="' + year + '"]');
+          if (startInput && endInput) {
+            sourceYearDates[year] = {
+              startDate: startInput.value,
+              endDate: endInput.value
+            };
+          }
+        }
+      }
+
+      // Create new task
+      taskCounter++;
+      var newTaskId = taskCounter;
+      var container = document.getElementById('tasksContainer');
+
+      var taskDiv = document.createElement('div');
+      taskDiv.className = 'task-item';
+      taskDiv.dataset.taskId = newTaskId;
+
+      taskDiv.innerHTML =
+        '<div class="task-item-header">' +
+          '<span class="task-number">Task ' + newTaskId + '</span>' +
+          '<div class="task-header-buttons">' +
+            '<button type="button" class="duplicate-task-btn" onclick="duplicateTaskItem(' + newTaskId + ')">Duplicate</button>' +
+            '<button type="button" class="remove-task-btn" onclick="removeTaskItem(' + newTaskId + ')">Remove</button>' +
+          '</div>' +
+        '</div>' +
+        '<input type="text" class="task-name" placeholder="Task or Deliverable Name" required>' +
+        '<div class="task-dates">' +
+          '<div>' +
+            '<label>Base Start Date</label>' +
+            '<input type="date" class="task-start-date" required onchange="onBaseDateChange(this, ' + newTaskId + ')">' +
+          '</div>' +
+          '<div>' +
+            '<label>Base End Date</label>' +
+            '<input type="date" class="task-end-date" required onchange="onBaseDateChange(this, ' + newTaskId + ')">' +
+          '</div>' +
+        '</div>' +
+        '<div class="task-years-section">' +
+          '<div class="task-years-header">Project Years for this Task</div>' +
+          '<div class="task-year-selection">' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + newTaskId + '_year_1" value="1" onchange="onTaskYearSelectionChange(' + newTaskId + ')">' +
+              '<label for="task_' + newTaskId + '_year_1">Year 1</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + newTaskId + '_year_2" value="2" onchange="onTaskYearSelectionChange(' + newTaskId + ')">' +
+              '<label for="task_' + newTaskId + '_year_2">Year 2</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + newTaskId + '_year_3" value="3" onchange="onTaskYearSelectionChange(' + newTaskId + ')">' +
+              '<label for="task_' + newTaskId + '_year_3">Year 3</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + newTaskId + '_year_4" value="4" onchange="onTaskYearSelectionChange(' + newTaskId + ')">' +
+              '<label for="task_' + newTaskId + '_year_4">Year 4</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + newTaskId + '_year_5" value="5" onchange="onTaskYearSelectionChange(' + newTaskId + ')">' +
+              '<label for="task_' + newTaskId + '_year_5">Year 5</label>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      container.appendChild(taskDiv);
+
+      // Set duplicated values
+      taskDiv.querySelector('.task-name').value = sourceName + ' (copy)';
+      taskDiv.querySelector('.task-start-date').value = sourceStartDate;
+      taskDiv.querySelector('.task-end-date').value = sourceEndDate;
+
+      // Set selected years
+      for (var i = 0; i < sourceYears.length; i++) {
+        var yearCheckbox = document.getElementById('task_' + newTaskId + '_year_' + sourceYears[i]);
+        if (yearCheckbox) {
+          yearCheckbox.checked = true;
+        }
+      }
+
+      // Refresh year dates if custom dates is enabled
+      if (customDates && sourceYears.length > 0) {
+        refreshTaskYearDates(newTaskId);
+
+        // Now set the custom date values
+        setTimeout(function() {
+          for (var year in sourceYearDates) {
+            var startInput = taskDiv.querySelector('.year-start-date[data-year="' + year + '"]');
+            var endInput = taskDiv.querySelector('.year-end-date[data-year="' + year + '"]');
+            if (startInput && endInput) {
+              startInput.value = sourceYearDates[year].startDate;
+              endInput.value = sourceYearDates[year].endDate;
+            }
+          }
+        }, 0);
+      }
+
+      showMessage('Task duplicated successfully!', 'success');
     }
 
     function getSelectedPeople() {
