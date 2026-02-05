@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #007bff;
+    }
+    .modal-header h3 {
+      margin: 0;
+      color: #333;
+    }
+    .close-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .close-btn:hover {
+      background: #5a6268;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f9f9f9;
+    }
+    .form-section h4 {
+      margin-top: 0;
+      color: #007bff;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .people-selection {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      background: white;
+    }
+    .person-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      margin-bottom: 4px;
+      background: #f5f5f5;
+      border-radius: 3px;
+    }
+    .person-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+    }
+    .person-checkbox label {
+      margin: 0;
+      font-weight: normal;
+      flex: 1;
+      cursor: pointer;
+    }
+    .resource-type-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .resource-type-person {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    .resource-type-cost {
+      background: #d4edda;
+      color: #155724;
+    }
+    .search-btn, .update-btn {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+    }
+    .search-btn:hover, .update-btn:hover { background: #0056b3; }
+    .search-btn:disabled, .update-btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    #editSection {
+      display: none;
+    }
+    .info-box {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+    #message {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      font-style: italic;
+      margin-top: 4px;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+    }
+    .year-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      background: white;
+    }
+    .year-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      background: #f5f5f5;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+    }
+    .year-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-right: 6px;
+    }
+    .year-checkbox label {
+      margin: 0;
+      font-weight: normal;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Task details section */
+    .task-details-section {
+      background: #e7f3ff;
+      border: 1px solid #007bff;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .task-details-section h5 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #007bff;
+      font-size: 14px;
+    }
+    .task-years-header {
+      font-weight: bold;
+      font-size: 12px;
+      color: #007bff;
+      margin-bottom: 8px;
+    }
+
+    /* Data tables styles */
+    .data-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    .data-section h5 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+    }
+    .data-table th,
+    .data-table td {
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      text-align: left;
+    }
+    .data-table th {
+      background: #e9ecef;
+      font-weight: 600;
+    }
+    .data-table td {
+      vertical-align: middle;
+    }
+    .resource-cell {
+      font-weight: 500;
+      background: #f8f9fa;
+      min-width: 120px;
+    }
+    .year-header {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      font-weight: 600;
+      min-width: 80px;
+    }
+    .data-input {
+      width: 70px;
+      padding: 4px 6px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .date-input {
+      width: 130px;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    .data-table-wrapper {
+      overflow-x: auto;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .no-data {
+      color: #666;
+      font-style: italic;
+      padding: 10px;
+      text-align: center;
+    }
+    .year-label-cell {
+      font-weight: 600;
+      background: #e9ecef;
+      text-align: center;
+      min-width: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal-header">
+    <h3>Edit Existing Entries</h3>
+    <button class="close-btn" onclick="google.script.host.close()">Close</button>
+  </div>
+
+  <div class="form-section">
+    <h4>Step 1: Find Entries to Edit</h4>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Select Milestone</label>
+        <select id="searchMilestone" required>
+          <option value="">Loading milestones...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Select Task</label>
+        <select id="searchTask" required>
+          <option value="">Select a milestone first...</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="search-btn" id="searchBtn" onclick="searchForEntries()">Search</button>
+  </div>
+
+  <div id="editSection">
+    <div class="info-box" id="foundInfo"></div>
+
+    <div class="form-section">
+      <h4>Step 2: Update Information</h4>
+
+      <div class="form-group">
+        <label>Milestone Name</label>
+        <input type="text" id="editMilestone" required>
+      </div>
+
+      <!-- Task Details Section - groups task name and years together -->
+      <div class="task-details-section">
+        <h5>Task Details</h5>
+
+        <div class="form-group">
+          <label>Task or Deliverable Name</label>
+          <input type="text" id="editTask" required>
+        </div>
+
+        <div class="form-group">
+          <label class="task-years-header">Project Years for this Task</label>
+          <div class="year-selection" id="editYearSelection"></div>
+          <div class="info-text">Check/uncheck years to add or remove them from this task</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Select Resources (People/Roles & Direct Costs)</label>
+          <div class="people-selection" id="editPeopleSelection"></div>
+        </div>
+
+        <div class="form-group">
+          <label>Escalation Rate (%)</label>
+          <select id="editEscalation" required>
+            <option value="">Select escalation percentage...</option>
+          </select>
+
+          <label style="margin-top: 15px;">Notes</label>
+          <textarea id="editNotes"></textarea>
+        </div>
+      </div>
+
+      <!-- Dates Editing Section -->
+      <div class="data-section" id="datesSection">
+        <h5>Edit Dates per Year</h5>
+        <div class="info-text" style="margin-bottom: 10px;">Each year can have different start and end dates for this task.</div>
+        <div class="data-table-wrapper" id="datesTableWrapper">
+          <div class="no-data">Select years above to edit dates</div>
+        </div>
+      </div>
+
+      <!-- Quantity Editing Section -->
+      <div class="data-section" id="quantitySection">
+        <h5>Edit Quantities (Hours/Units)</h5>
+        <div class="info-text" style="margin-bottom: 10px;">For people: enter hours. For direct costs: enter number of units. Leave blank for no quantity.</div>
+        <div class="data-table-wrapper" id="quantityTableWrapper">
+          <div class="no-data">Select resources and years above to edit quantities</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button type="button" class="close-btn" onclick="google.script.host.close()">Cancel</button>
+        <button class="update-btn" id="updateBtn" onclick="updateEntries()" style="flex: 1;">Update All Matching Entries</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="message"></div>
+
+ <script>
+    var allPeople = [];
+    var allEscalations = [];
+    var currentSearchResult = null;
+
+    // Load initial data
+    console.log('Starting to load initial data...');
+
+    google.script.run
+      .withSuccessHandler(function(people) {
+        console.log('People loaded:', people);
+        allPeople = people;
+      })
+      .withFailureHandler(function(error) {
+        console.error('Error loading people:', error);
+        showMessage('Error loading people: ' + error.message, 'error');
+      })
+      .getAllPeopleRoles();
+
+    google.script.run
+      .withSuccessHandler(function(escalations) {
+        console.log('Escalations loaded:', escalations);
+        allEscalations = escalations;
+        loadEscalationOptions(escalations);
+      })
+      .withFailureHandler(function(error) {
+        console.error('Error loading escalations:', error);
+        showMessage('Error loading escalations: ' + error.message, 'error');
+      })
+      .getAllEscalationOptions();
+
+    google.script.run
+      .withSuccessHandler(function(milestones) {
+        console.log('Milestones loaded:', milestones);
+        loadMilestones(milestones);
+      })
+      .withFailureHandler(function(error) {
+        console.error('Error loading milestones:', error);
+        var select = document.getElementById('searchMilestone');
+        select.innerHTML = '<option value="">Error loading milestones</option>';
+        showMessage('Error loading milestones: ' + error.message, 'error');
+      })
+      .getAllUniqueMilestones();
+
+    function loadMilestones(milestones) {
+      var select = document.getElementById('searchMilestone');
+
+      if (!milestones || milestones.length === 0) {
+        select.innerHTML = '<option value="">No milestones found</option>';
+        return;
+      }
+
+      select.innerHTML = '<option value="">Select a milestone...</option>';
+
+      for (var i = 0; i < milestones.length; i++) {
+        var option = document.createElement('option');
+        option.value = milestones[i];
+        option.textContent = milestones[i];
+        select.appendChild(option);
+      }
+    }
+
+    document.getElementById('searchMilestone').addEventListener('change', function() {
+      var milestone = this.value;
+      if (milestone) {
+        google.script.run
+          .withSuccessHandler(loadTasks)
+          .withFailureHandler(function(error) {
+            showMessage('Error loading tasks: ' + error.message, 'error');
+          })
+          .getTasksForMilestone(milestone);
+      } else {
+        document.getElementById('searchTask').innerHTML = '<option value="">Select a milestone first...</option>';
+      }
+    });
+
+    function loadTasks(tasks) {
+      var select = document.getElementById('searchTask');
+
+      if (!tasks || tasks.length === 0) {
+        select.innerHTML = '<option value="">No tasks found</option>';
+        return;
+      }
+
+      select.innerHTML = '<option value="">Select a task...</option>';
+
+      for (var i = 0; i < tasks.length; i++) {
+        var option = document.createElement('option');
+        option.value = tasks[i];
+        option.textContent = tasks[i];
+        select.appendChild(option);
+      }
+    }
+
+    function loadEscalationOptions(escalations) {
+      var select = document.getElementById('editEscalation');
+      select.innerHTML = '<option value="">Select escalation percentage...</option>';
+
+      for (var i = 0; i < escalations.length; i++) {
+        var option = document.createElement('option');
+        option.value = escalations[i].percentage + '%';
+        option.textContent = escalations[i].percentage + '%';
+        select.appendChild(option);
+      }
+    }
+
+    function searchForEntries() {
+      var milestone = document.getElementById('searchMilestone').value;
+      var task = document.getElementById('searchTask').value;
+
+      if (!milestone || !task) {
+        showMessage('Please select both milestone and task', 'error');
+        return;
+      }
+
+      var searchBtn = document.getElementById('searchBtn');
+      searchBtn.disabled = true;
+      searchBtn.textContent = 'Searching...';
+
+      google.script.run
+        .withSuccessHandler(displaySearchResults)
+        .withFailureHandler(function(error) {
+          searchBtn.disabled = false;
+          searchBtn.textContent = 'Search';
+          showMessage('Error: ' + (error.message || 'Unknown error'), 'error');
+        })
+        .searchEntriesForUI(milestone, task);
+    }
+
+    function displaySearchResults(result) {
+      var searchBtn = document.getElementById('searchBtn');
+      searchBtn.disabled = false;
+      searchBtn.textContent = 'Search';
+
+      if (!result || !result.found) {
+        showMessage(result ? result.message : 'No response from server', 'error');
+        document.getElementById('editSection').style.display = 'none';
+        return;
+      }
+
+      currentSearchResult = result;
+
+      document.getElementById('foundInfo').textContent =
+        'Found ' + result.rowCount + ' matching entries for "' + result.milestone + '" - "' + result.task + '"';
+
+      document.getElementById('editMilestone').value = result.milestone || '';
+      document.getElementById('editTask').value = result.task || '';
+
+      // Build year checkboxes with change listeners
+      var yearContainer = document.getElementById('editYearSelection');
+      yearContainer.innerHTML = '';
+      for (var i = 1; i <= 5; i++) {
+        var div = document.createElement('div');
+        div.className = 'year-checkbox';
+        var checked = result.projectYears && result.projectYears.indexOf(i) !== -1 ? 'checked' : '';
+        div.innerHTML =
+          '<input type="checkbox" id="edit_year_' + i + '" value="' + i + '" ' + checked + ' onchange="onSelectionChange()">' +
+          '<label for="edit_year_' + i + '">Year ' + i + '</label>';
+        yearContainer.appendChild(div);
+      }
+
+      // Build people checkboxes with change listeners
+      var peopleContainer = document.getElementById('editPeopleSelection');
+      peopleContainer.innerHTML = '';
+      for (var i = 0; i < allPeople.length; i++) {
+        var person = allPeople[i];
+        var div = document.createElement('div');
+        div.className = 'person-checkbox';
+        var checked = result.people && result.people.indexOf(person.person) !== -1 ? 'checked' : '';
+
+        var typeBadgeClass = person.type === 'Direct Cost' ? 'resource-type-cost' : 'resource-type-person';
+        var typeBadgeText = person.type === 'Direct Cost' ? 'Cost' : 'Person';
+
+        div.innerHTML =
+          '<input type="checkbox" id="edit_person_' + person.id + '" value="' + person.id + '" ' + checked + ' onchange="onSelectionChange()">' +
+          '<label for="edit_person_' + person.id + '">' +
+            person.person +
+            '<span class="resource-type-badge ' + typeBadgeClass + '">' + typeBadgeText + '</span>' +
+            ' - $' + parseFloat(person.rate).toFixed(2) +
+          '</label>';
+        peopleContainer.appendChild(div);
+      }
+
+      document.getElementById('editEscalation').value = result.escalation || '';
+      document.getElementById('editNotes').value = result.notes || '';
+
+      document.getElementById('editSection').style.display = 'block';
+
+      // Build the dates and quantity tables
+      refreshDatesTable();
+      refreshQuantityTable();
+
+      showMessage('Entries found! Update the fields below and click "Update All Matching Entries"', 'success');
+    }
+
+    function getSelectedYears() {
+      var years = [];
+      for (var i = 1; i <= 5; i++) {
+        var checkbox = document.getElementById('edit_year_' + i);
+        if (checkbox && checkbox.checked) {
+          years.push(i);
+        }
+      }
+      return years.sort(function(a, b) { return a - b; });
+    }
+
+    function getSelectedPeople() {
+      var people = [];
+      var checkboxes = document.querySelectorAll('#editPeopleSelection input[type="checkbox"]:checked');
+      for (var i = 0; i < checkboxes.length; i++) {
+        var personId = parseInt(checkboxes[i].value);
+        for (var j = 0; j < allPeople.length; j++) {
+          if (allPeople[j].id === personId) {
+            people.push(allPeople[j]);
+            break;
+          }
+        }
+      }
+      return people;
+    }
+
+    function onSelectionChange() {
+      refreshDatesTable();
+      refreshQuantityTable();
+    }
+
+    function formatDateForInput(date) {
+      if (!date) return '';
+      if (typeof date === 'string') {
+        date = new Date(date);
+      }
+      var year = date.getFullYear();
+      var month = String(date.getMonth() + 1).padStart(2, '0');
+      var day = String(date.getDate()).padStart(2, '0');
+      return year + '-' + month + '-' + day;
+    }
+
+    function refreshDatesTable() {
+      var wrapper = document.getElementById('datesTableWrapper');
+      var selectedYears = getSelectedYears();
+
+      if (selectedYears.length === 0) {
+        wrapper.innerHTML = '<div class="no-data">Select at least one year to edit dates</div>';
+        return;
+      }
+
+      var datesMap = currentSearchResult ? (currentSearchResult.datesMap || {}) : {};
+
+      var html = '<table class="data-table">';
+      html += '<tr><th class="year-label-cell">Year</th><th>Start Date</th><th>End Date</th></tr>';
+
+      for (var y = 0; y < selectedYears.length; y++) {
+        var year = selectedYears[y];
+        var existingDates = datesMap[year] || {};
+
+        var startVal = existingDates.startDate ? formatDateForInput(existingDates.startDate) : '';
+        var endVal = existingDates.endDate ? formatDateForInput(existingDates.endDate) : '';
+
+        html += '<tr>';
+        html += '<td class="year-label-cell">Year ' + year + '</td>';
+        html += '<td><input type="date" class="date-input year-start-date" data-year="' + year + '" value="' + startVal + '"></td>';
+        html += '<td><input type="date" class="date-input year-end-date" data-year="' + year + '" value="' + endVal + '"></td>';
+        html += '</tr>';
+      }
+
+      html += '</table>';
+      wrapper.innerHTML = html;
+    }
+
+    function refreshQuantityTable() {
+      var wrapper = document.getElementById('quantityTableWrapper');
+      var selectedYears = getSelectedYears();
+      var selectedPeople = getSelectedPeople();
+
+      if (selectedYears.length === 0 || selectedPeople.length === 0) {
+        wrapper.innerHTML = '<div class="no-data">Select at least one resource and one year to edit quantities</div>';
+        return;
+      }
+
+      var hoursMap = currentSearchResult ? (currentSearchResult.hoursMap || {}) : {};
+
+      var html = '<table class="data-table">';
+
+      // Header row
+      html += '<tr><th class="resource-cell">Resource</th>';
+      for (var y = 0; y < selectedYears.length; y++) {
+        html += '<th class="year-header">Year ' + selectedYears[y] + '</th>';
+      }
+      html += '</tr>';
+
+      // Resource rows
+      for (var p = 0; p < selectedPeople.length; p++) {
+        var person = selectedPeople[p];
+        var typeBadgeClass = person.type === 'Direct Cost' ? 'resource-type-cost' : 'resource-type-person';
+        var typeBadgeText = person.type === 'Direct Cost' ? 'Cost' : 'Person';
+
+        html += '<tr>';
+        html += '<td class="resource-cell">' +
+                person.person +
+                '<span class="resource-type-badge ' + typeBadgeClass + '">' + typeBadgeText + '</span>' +
+                '</td>';
+
+        for (var y = 0; y < selectedYears.length; y++) {
+          var year = selectedYears[y];
+          var hoursKey = person.person + '|' + year;
+          var existingValue = hoursMap[hoursKey] || '';
+
+          html += '<td style="text-align: center;">' +
+                  '<input type="number" class="data-input quantity-input" ' +
+                  'data-person="' + person.person + '" ' +
+                  'data-year="' + year + '" ' +
+                  'value="' + existingValue + '" ' +
+                  'placeholder="qty" min="0" step="0.5">' +
+                  '</td>';
+        }
+
+        html += '</tr>';
+      }
+
+      html += '</table>';
+      wrapper.innerHTML = html;
+    }
+
+    function updateEntries() {
+      if (!currentSearchResult) {
+        showMessage('Please search for entries first', 'error');
+        return;
+      }
+
+      var selectedPeople = getSelectedPeople();
+
+      if (selectedPeople.length === 0) {
+        showMessage('Please select at least one resource', 'error');
+        return;
+      }
+
+      var projectYears = getSelectedYears();
+
+      if (projectYears.length === 0) {
+        showMessage('Please select at least one project year for this task', 'error');
+        return;
+      }
+
+      // Collect dates data from the dates table
+      var datesMap = {};
+      for (var y = 0; y < projectYears.length; y++) {
+        var year = projectYears[y];
+        var startInput = document.querySelector('.year-start-date[data-year="' + year + '"]');
+        var endInput = document.querySelector('.year-end-date[data-year="' + year + '"]');
+
+        if (startInput && endInput && startInput.value && endInput.value) {
+          datesMap[year] = {
+            startDate: startInput.value,
+            endDate: endInput.value
+          };
+        }
+      }
+
+      // Validate that all years have dates
+      for (var y = 0; y < projectYears.length; y++) {
+        var year = projectYears[y];
+        if (!datesMap[year] || !datesMap[year].startDate || !datesMap[year].endDate) {
+          showMessage('Please enter both start and end dates for Year ' + year, 'error');
+          return;
+        }
+      }
+
+      // Collect hours data from the quantity table
+      var hoursMap = {};
+      var quantityInputs = document.querySelectorAll('.quantity-input');
+      for (var i = 0; i < quantityInputs.length; i++) {
+        var input = quantityInputs[i];
+        var personName = input.dataset.person;
+        var year = input.dataset.year;
+        var value = input.value ? parseFloat(input.value) : '';
+
+        var hoursKey = personName + '|' + year;
+        hoursMap[hoursKey] = value;
+      }
+
+      // Build selectedPeople with rate and type
+      var peopleData = [];
+      for (var i = 0; i < selectedPeople.length; i++) {
+        peopleData.push({
+          person: selectedPeople[i].person,
+          rate: selectedPeople[i].rate,
+          type: selectedPeople[i].type
+        });
+      }
+
+      // Use first year's dates as base dates (for backward compatibility)
+      var firstYear = projectYears[0];
+      var baseDates = datesMap[firstYear] || {};
+
+      var updates = {
+        milestone: document.getElementById('editMilestone').value,
+        task: document.getElementById('editTask').value,
+        startDate: baseDates.startDate,
+        endDate: baseDates.endDate,
+        projectYears: projectYears,
+        selectedPeople: peopleData,
+        escalation: document.getElementById('editEscalation').value,
+        notes: document.getElementById('editNotes').value,
+        hoursMap: hoursMap,
+        datesMap: datesMap
+      };
+
+      var updateBtn = document.getElementById('updateBtn');
+      updateBtn.disabled = true;
+      updateBtn.textContent = 'Updating...';
+
+      google.script.run
+        .withSuccessHandler(onUpdateSuccess)
+        .withFailureHandler(onError)
+        .updateEntries(
+          { milestone: currentSearchResult.milestone, task: currentSearchResult.task },
+          updates
+        );
+    }
+
+    function onUpdateSuccess(result) {
+      var updateBtn = document.getElementById('updateBtn');
+      updateBtn.disabled = false;
+      updateBtn.textContent = 'Update All Matching Entries';
+
+      if (result.success) {
+        showMessage('Success! Deleted ' + result.deletedRows + ' old rows and added ' + result.addedRows + ' updated rows.', 'success');
+
+        document.getElementById('editSection').style.display = 'none';
+        document.getElementById('searchMilestone').value = '';
+        document.getElementById('searchTask').value = '';
+        currentSearchResult = null;
+
+        google.script.run
+          .withSuccessHandler(loadMilestones)
+          .getAllUniqueMilestones();
+      } else {
+        showMessage('Error: ' + result.error, 'error');
+      }
+    }
+
+    function onError(error) {
+      var searchBtn = document.getElementById('searchBtn');
+      var updateBtn = document.getElementById('updateBtn');
+      searchBtn.disabled = false;
+      searchBtn.textContent = 'Search';
+      updateBtn.disabled = false;
+      updateBtn.textContent = 'Update All Matching Entries';
+
+      showMessage('Error: ' + error.message, 'error');
+    }
+
+    function showMessage(msg, type) {
+      var messageDiv = document.getElementById('message');
+      messageDiv.textContent = msg;
+      messageDiv.className = type;
+      messageDiv.style.display = 'block';
+      setTimeout(function() {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

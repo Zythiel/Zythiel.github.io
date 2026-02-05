@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #007bff;
+    }
+    .modal-header h3 {
+      margin: 0;
+      color: #333;
+    }
+    .close-btn {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .close-btn:hover {
+      background: #5a6268;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-row.three-col {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .people-selection {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+    .person-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 6px;
+      margin-bottom: 4px;
+      background: white;
+      border-radius: 3px;
+    }
+    .person-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+    }
+    .person-checkbox label {
+      margin: 0;
+      font-weight: normal;
+      flex: 1;
+      cursor: pointer;
+    }
+    .resource-type-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .resource-type-person {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+    .resource-type-cost {
+      background: #d4edda;
+      color: #155724;
+    }
+    .add-new-person {
+      margin-top: 10px;
+      padding: 10px;
+      background: #e7f3ff;
+      border-radius: 4px;
+      border: 1px dashed #007bff;
+    }
+    .add-new-person input,
+    .add-new-person select {
+      margin-bottom: 8px;
+    }
+    .tasks-container {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      background: #f9f9f9;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .task-item {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    .task-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .task-number {
+      font-weight: bold;
+      color: #007bff;
+    }
+    .task-item input[type="text"] {
+      margin-bottom: 6px;
+    }
+    .task-dates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .task-dates label {
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+    .task-years-section {
+      margin-top: 10px;
+      padding: 10px;
+      background: #e7f3ff;
+      border: 1px solid #007bff;
+      border-radius: 4px;
+    }
+    .task-years-header {
+      font-weight: bold;
+      font-size: 12px;
+      color: #007bff;
+      margin-bottom: 8px;
+    }
+    .task-year-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .task-year-checkbox {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      background: white;
+      border-radius: 3px;
+      border: 1px solid #ddd;
+    }
+    .task-year-checkbox input[type="checkbox"] {
+      width: auto;
+      margin-right: 6px;
+    }
+    .task-year-checkbox label {
+      margin: 0;
+      font-weight: normal;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .task-year-dates {
+      margin-top: 10px;
+      padding: 10px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+    }
+    .task-year-dates-header {
+      font-weight: bold;
+      font-size: 12px;
+      color: #856404;
+      margin-bottom: 8px;
+    }
+    .year-date-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+    .year-date-row label {
+      font-size: 11px;
+      margin: 0;
+      font-weight: 600;
+      color: #856404;
+    }
+    .year-date-row input {
+      margin: 0;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+    .remove-task-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .remove-task-btn:hover {
+      background: #c82333;
+    }
+    .add-person-btn, .add-task-btn, .refresh-hours-btn {
+      background: #28a745;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      width: 100%;
+    }
+    .refresh-hours-btn {
+      background: #17a2b8;
+      margin-top: 10px;
+    }
+    .refresh-hours-btn:hover {
+      background: #138496;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+    }
+    .submit-btn {
+      background: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      flex: 1;
+    }
+    .submit-btn:hover { background: #0056b3; }
+    .submit-btn:disabled { background: #6c757d; cursor: not-allowed; }
+    .add-person-btn:hover, .add-task-btn:hover { background: #218838; }
+    .toggle-add-new {
+      background: #6c757d;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .toggle-add-new:hover { background: #5a6268; }
+    .option-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .option-toggle input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+    .option-toggle label {
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .hours-table-container {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    .hours-table-container h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+    .hours-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 12px;
+    }
+    .hours-table th,
+    .hours-table td {
+      border: 1px solid #dee2e6;
+      padding: 8px;
+      text-align: left;
+    }
+    .hours-table th {
+      background: #e9ecef;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .hours-table td {
+      vertical-align: top;
+    }
+    .person-cell {
+      font-weight: 500;
+      background: #f8f9fa;
+    }
+    .hours-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hours-year-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hours-year-item label {
+      font-size: 10px;
+      margin: 0;
+      min-width: 35px;
+      font-weight: normal;
+    }
+    .hours-year-item input {
+      width: 60px;
+      padding: 2px 4px;
+      font-size: 11px;
+    }
+    .task-header-cell {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      font-weight: 600;
+    }
+    #message {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      font-style: italic;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal-header">
+    <h3>Project Task Entry</h3>
+    <button class="close-btn" onclick="google.script.host.close()">Close</button>
+  </div>
+
+  <form id="entryForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Milestone</label>
+        <input type="text" id="milestone" required>
+      </div>
+      <div class="form-group">
+        <label>Escalation Rate (%)</label>
+        <select id="escalation" required>
+          <option value="">Select escalation percentage...</option>
+        </select>
+        <div class="info-text">Rates compound by this % each year</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Date Options</label>
+      <div class="option-toggle">
+        <input type="checkbox" id="customDatesToggle" onchange="onCustomDatesToggle()">
+        <label for="customDatesToggle">Use different dates for each project year</label>
+      </div>
+      <div class="info-text">When unchecked, base dates advance +1 year automatically for each project year</div>
+    </div>
+
+    <div class="form-group">
+      <label>Tasks or Deliverables</label>
+      <div id="tasksContainer" class="tasks-container"></div>
+      <button type="button" class="add-task-btn" onclick="addTaskItem()" style="margin-top: 10px;">+ Add Task/Deliverable</button>
+    </div>
+
+    <div class="form-group">
+      <label>Select Resources (People/Roles & Direct Costs)</label>
+      <div id="peopleSelection" class="people-selection">
+        <div class="loading">Loading resources...</div>
+      </div>
+      <button type="button" class="toggle-add-new" onclick="toggleAddNew()">+ Add New Resource</button>
+      <div id="addNewPerson" class="add-new-person" style="display: none;">
+        <select id="newResourceType">
+          <option value="Person/Role">Person/Role</option>
+          <option value="Direct Cost">Direct Cost</option>
+        </select>
+        <input type="text" id="newPersonName" placeholder="Name (e.g., Aaron or Software License)">
+        <input type="number" id="newPersonRate" step="0.01" placeholder="Rate/Unit Cost">
+        <button type="button" class="add-person-btn" onclick="addNewPerson()">Add Resource</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Quantity Entry (Optional)</label>
+      <div class="option-toggle">
+        <input type="checkbox" id="differentHoursToggle">
+        <label for="differentHoursToggle">Use different quantities for each project year</label>
+      </div>
+      <button type="button" class="refresh-hours-btn" onclick="refreshHoursTable()">Generate Quantity Entry Table</button>
+      <div class="info-text">Click the button above after selecting tasks, resources, and years to enter quantities (hours/units)</div>
+
+      <div id="hoursTableContainer" class="hours-table-container">
+        <h4>Enter Quantities for Each Resource/Task Combination</h4>
+        <div class="info-text" style="margin-bottom: 10px;">For people: enter hours. For direct costs: enter number of units.</div>
+        <div id="hoursTableWrapper" style="overflow-x: auto; max-height: 300px;"></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="notes"></textarea>
+    </div>
+
+    <div class="button-row">
+      <button type="button" class="close-btn" onclick="google.script.host.close()">Cancel</button>
+      <button type="submit" class="submit-btn">Submit Entry</button>
+    </div>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+    var allPeople = [];
+    var allEscalations = [];
+    var taskCounter = 0;
+    var savedEscalation = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      addTaskItem();
+    });
+
+    google.script.run
+      .withSuccessHandler(loadPeopleList)
+      .withFailureHandler(onError)
+      .getAllPeopleRoles();
+
+    google.script.run
+      .withSuccessHandler(loadEscalationOptions)
+      .withFailureHandler(onError)
+      .getAllEscalationOptions();
+
+    google.script.run
+      .withSuccessHandler(function(escalation) {
+        savedEscalation = escalation;
+      })
+      .getSavedEscalation();
+
+    function getSelectedYearsForTask(taskId) {
+      var years = [];
+      for (var i = 1; i <= 5; i++) {
+        var checkbox = document.getElementById('task_' + taskId + '_year_' + i);
+        if (checkbox && checkbox.checked) {
+          years.push(i);
+        }
+      }
+      return years.sort(function(a, b) { return a - b; });
+    }
+
+    function getAllSelectedYears() {
+      // Get all unique years selected across all tasks
+      var allYears = {};
+      var taskItems = document.querySelectorAll('.task-item');
+      for (var i = 0; i < taskItems.length; i++) {
+        var taskId = taskItems[i].dataset.taskId;
+        var years = getSelectedYearsForTask(taskId);
+        for (var j = 0; j < years.length; j++) {
+          allYears[years[j]] = true;
+        }
+      }
+      var result = [];
+      for (var key in allYears) {
+        result.push(parseInt(key));
+      }
+      return result.sort(function(a, b) { return a - b; });
+    }
+
+    function onTaskYearSelectionChange(taskId) {
+      if (document.getElementById('customDatesToggle').checked) {
+        refreshTaskYearDates(taskId);
+      }
+    }
+
+    function onCustomDatesToggle() {
+      var taskItems = document.querySelectorAll('.task-item');
+      for (var i = 0; i < taskItems.length; i++) {
+        var taskId = taskItems[i].dataset.taskId;
+        refreshTaskYearDates(taskId);
+      }
+    }
+
+    function refreshTaskYearDates(taskId) {
+      var taskDiv = document.querySelector('.task-item[data-task-id="' + taskId + '"]');
+      if (!taskDiv) return;
+
+      var customDates = document.getElementById('customDatesToggle').checked;
+      var selectedYears = getSelectedYearsForTask(taskId);
+      var yearDatesContainer = taskDiv.querySelector('.task-year-dates');
+
+      if (customDates && selectedYears.length > 0) {
+        if (!yearDatesContainer) {
+          yearDatesContainer = document.createElement('div');
+          yearDatesContainer.className = 'task-year-dates';
+          taskDiv.appendChild(yearDatesContainer);
+        }
+
+        var baseStartDate = taskDiv.querySelector('.task-start-date').value;
+        var baseEndDate = taskDiv.querySelector('.task-end-date').value;
+
+        var html = '<div class="task-year-dates-header">Custom Dates per Year</div>';
+
+        for (var y = 0; y < selectedYears.length; y++) {
+          var year = selectedYears[y];
+
+          var defaultStart = '';
+          var defaultEnd = '';
+          if (baseStartDate) {
+            var d = new Date(baseStartDate);
+            d.setFullYear(d.getFullYear() + (year - 1));
+            defaultStart = formatDateForInput(d);
+          }
+          if (baseEndDate) {
+            var d = new Date(baseEndDate);
+            d.setFullYear(d.getFullYear() + (year - 1));
+            defaultEnd = formatDateForInput(d);
+          }
+
+          var existingStart = taskDiv.querySelector('.year-start-date[data-year="' + year + '"]');
+          var existingEnd = taskDiv.querySelector('.year-end-date[data-year="' + year + '"]');
+          var startVal = existingStart ? existingStart.value : defaultStart;
+          var endVal = existingEnd ? existingEnd.value : defaultEnd;
+
+          html += '<div class="year-date-row">' +
+                  '<label>Year ' + year + ':</label>' +
+                  '<input type="date" class="year-start-date" data-year="' + year + '" value="' + startVal + '" placeholder="Start">' +
+                  '<input type="date" class="year-end-date" data-year="' + year + '" value="' + endVal + '" placeholder="End">' +
+                  '</div>';
+        }
+
+        yearDatesContainer.innerHTML = html;
+        yearDatesContainer.style.display = 'block';
+      } else {
+        if (yearDatesContainer) {
+          yearDatesContainer.style.display = 'none';
+        }
+      }
+    }
+
+    function formatDateForInput(date) {
+      var year = date.getFullYear();
+      var month = String(date.getMonth() + 1).padStart(2, '0');
+      var day = String(date.getDate()).padStart(2, '0');
+      return year + '-' + month + '-' + day;
+    }
+
+    function addTaskItem() {
+      taskCounter++;
+      var container = document.getElementById('tasksContainer');
+      if (!container) {
+        console.error('tasksContainer not found');
+        return;
+      }
+
+      var taskDiv = document.createElement('div');
+      taskDiv.className = 'task-item';
+      taskDiv.dataset.taskId = taskCounter;
+
+      var taskId = taskCounter;
+
+      taskDiv.innerHTML =
+        '<div class="task-item-header">' +
+          '<span class="task-number">Task ' + taskId + '</span>' +
+          '<button type="button" class="remove-task-btn" onclick="removeTaskItem(' + taskId + ')">Remove</button>' +
+        '</div>' +
+        '<input type="text" class="task-name" placeholder="Task or Deliverable Name" required>' +
+        '<div class="task-dates">' +
+          '<div>' +
+            '<label>Base Start Date</label>' +
+            '<input type="date" class="task-start-date" required onchange="onBaseDateChange(this, ' + taskId + ')">' +
+          '</div>' +
+          '<div>' +
+            '<label>Base End Date</label>' +
+            '<input type="date" class="task-end-date" required onchange="onBaseDateChange(this, ' + taskId + ')">' +
+          '</div>' +
+        '</div>' +
+        '<div class="task-years-section">' +
+          '<div class="task-years-header">Project Years for this Task</div>' +
+          '<div class="task-year-selection">' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + taskId + '_year_1" value="1" onchange="onTaskYearSelectionChange(' + taskId + ')">' +
+              '<label for="task_' + taskId + '_year_1">Year 1</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + taskId + '_year_2" value="2" onchange="onTaskYearSelectionChange(' + taskId + ')">' +
+              '<label for="task_' + taskId + '_year_2">Year 2</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + taskId + '_year_3" value="3" onchange="onTaskYearSelectionChange(' + taskId + ')">' +
+              '<label for="task_' + taskId + '_year_3">Year 3</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + taskId + '_year_4" value="4" onchange="onTaskYearSelectionChange(' + taskId + ')">' +
+              '<label for="task_' + taskId + '_year_4">Year 4</label>' +
+            '</div>' +
+            '<div class="task-year-checkbox">' +
+              '<input type="checkbox" id="task_' + taskId + '_year_5" value="5" onchange="onTaskYearSelectionChange(' + taskId + ')">' +
+              '<label for="task_' + taskId + '_year_5">Year 5</label>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      container.appendChild(taskDiv);
+
+      if (document.getElementById('customDatesToggle').checked) {
+        refreshTaskYearDates(taskId);
+      }
+    }
+
+    function onBaseDateChange(input, taskId) {
+      if (document.getElementById('customDatesToggle').checked) {
+        refreshTaskYearDates(taskId);
+      }
+    }
+
+    function removeTaskItem(taskId) {
+      var container = document.getElementById('tasksContainer');
+      if (container.children.length > 1) {
+        var taskDiv = container.querySelector('[data-task-id="' + taskId + '"]');
+        if (taskDiv) {
+          taskDiv.remove();
+        }
+      } else {
+        showMessage('You must have at least one task/deliverable', 'error');
+      }
+    }
+
+    function getSelectedPeople() {
+      var people = [];
+      var checkboxes = document.querySelectorAll('#peopleSelection input[type="checkbox"]:checked');
+      for (var i = 0; i < checkboxes.length; i++) {
+        var personId = parseInt(checkboxes[i].value);
+        for (var j = 0; j < allPeople.length; j++) {
+          if (allPeople[j].id === personId) {
+            people.push(allPeople[j]);
+            break;
+          }
+        }
+      }
+      return people;
+    }
+
+    function getTasksWithYears() {
+      var tasks = [];
+      var taskItems = document.querySelectorAll('.task-item');
+      for (var i = 0; i < taskItems.length; i++) {
+        var taskDiv = taskItems[i];
+        var taskId = taskDiv.dataset.taskId;
+        var taskName = taskDiv.querySelector('.task-name').value.trim();
+        var years = getSelectedYearsForTask(taskId);
+        if (taskName && years.length > 0) {
+          tasks.push({
+            id: taskId,
+            name: taskName,
+            years: years
+          });
+        }
+      }
+      return tasks;
+    }
+
+    function refreshHoursTable() {
+      var selectedPeople = getSelectedPeople();
+      var tasks = getTasksWithYears();
+      var differentHours = document.getElementById('differentHoursToggle').checked;
+
+      if (selectedPeople.length === 0) {
+        showMessage('Please select at least one resource first', 'error');
+        return;
+      }
+
+      if (tasks.length === 0) {
+        showMessage('Please add at least one task with a name and select project years for it', 'error');
+        return;
+      }
+
+      var container = document.getElementById('hoursTableContainer');
+      var wrapper = document.getElementById('hoursTableWrapper');
+
+      var html = '<table class="hours-table">';
+
+      // Header row
+      html += '<tr><th class="person-cell">Resource</th>';
+      for (var t = 0; t < tasks.length; t++) {
+        var task = tasks[t];
+        var yearsLabel = 'Y' + task.years.join(',');
+        html += '<th class="task-header-cell">' + task.name + '<br><span style="font-size:10px;font-weight:normal;">(' + yearsLabel + ')</span></th>';
+      }
+      html += '</tr>';
+
+      // Resource rows
+      for (var p = 0; p < selectedPeople.length; p++) {
+        var person = selectedPeople[p];
+        var typeBadgeClass = person.type === 'Direct Cost' ? 'resource-type-cost' : 'resource-type-person';
+        var typeBadgeText = person.type === 'Direct Cost' ? 'Cost' : 'Person';
+
+        html += '<tr>';
+        html += '<td class="person-cell">' +
+                person.person +
+                '<span class="resource-type-badge ' + typeBadgeClass + '">' + typeBadgeText + '</span>' +
+                '<br><span style="font-size:10px;color:#666;">$' + parseFloat(person.rate).toFixed(2) + '</span></td>';
+
+        for (var t = 0; t < tasks.length; t++) {
+          var task = tasks[t];
+          html += '<td>';
+
+          if (differentHours) {
+            html += '<div class="hours-inputs">';
+            for (var y = 0; y < task.years.length; y++) {
+              var year = task.years[y];
+              html +=
+                '<div class="hours-year-item">' +
+                  '<label>Y' + year + ':</label>' +
+                  '<input type="number" class="hours-input" data-person-id="' + person.id + '" data-task-id="' + task.id + '" data-year="' + year + '" placeholder="qty" min="0" step="0.5">' +
+                '</div>';
+            }
+            html += '</div>';
+          } else {
+            html += '<input type="number" class="hours-input" data-person-id="' + person.id + '" data-task-id="' + task.id + '" data-year="all" placeholder="quantity" min="0" step="0.5" style="width: 80px;">';
+          }
+
+          html += '</td>';
+        }
+
+        html += '</tr>';
+      }
+
+      html += '</table>';
+      wrapper.innerHTML = html;
+      container.style.display = 'block';
+
+      showMessage('Quantity table generated! Fill in as needed (optional)', 'success');
+    }
+
+    function loadPeopleList(people) {
+      console.log('loadPeopleList called with:', people);
+      allPeople = people;
+      var container = document.getElementById('peopleSelection');
+
+      if (!container) {
+        console.error('peopleSelection container not found');
+        return;
+      }
+
+      if (people.length === 0) {
+        container.innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">No resources yet. Add one below.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      for (var i = 0; i < people.length; i++) {
+        var person = people[i];
+        var typeBadgeClass = person.type === 'Direct Cost' ? 'resource-type-cost' : 'resource-type-person';
+        var typeBadgeText = person.type === 'Direct Cost' ? 'Cost' : 'Person';
+
+        var div = document.createElement('div');
+        div.className = 'person-checkbox';
+        div.innerHTML =
+          '<input type="checkbox" id="person_' + person.id + '" value="' + person.id + '">' +
+          '<label for="person_' + person.id + '">' +
+            person.person +
+            '<span class="resource-type-badge ' + typeBadgeClass + '">' + typeBadgeText + '</span>' +
+            ' - $' + parseFloat(person.rate).toFixed(2) +
+          '</label>';
+        container.appendChild(div);
+      }
+    }
+
+    function loadEscalationOptions(options) {
+      console.log('loadEscalationOptions called with:', options);
+      var select = document.getElementById('escalation');
+
+      if (!select) {
+        console.error('escalation select not found');
+        return;
+      }
+
+      select.innerHTML = '<option value="">Select escalation percentage...</option>';
+
+      for (var i = 0; i < options.length; i++) {
+        var opt = options[i];
+        var option = document.createElement('option');
+        option.value = opt.percentage;
+        option.textContent = opt.percentage + '%';
+        select.appendChild(option);
+      }
+
+      if (savedEscalation !== null && savedEscalation !== undefined) {
+        select.value = savedEscalation;
+      }
+    }
+
+    function toggleAddNew() {
+      var addNewDiv = document.getElementById('addNewPerson');
+      addNewDiv.style.display = addNewDiv.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function addNewPerson() {
+      var name = document.getElementById('newPersonName').value.trim();
+      var rate = document.getElementById('newPersonRate').value;
+      var type = document.getElementById('newResourceType').value;
+
+      if (!name || !rate) {
+        showMessage('Please enter both name and rate/unit cost', 'error');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(function() {
+          document.getElementById('newPersonName').value = '';
+          document.getElementById('newPersonRate').value = '';
+          document.getElementById('newResourceType').value = 'Person/Role';
+          showMessage('Resource added successfully!', 'success');
+
+          google.script.run
+            .withSuccessHandler(loadPeopleList)
+            .getAllPeopleRoles();
+        })
+        .withFailureHandler(onError)
+        .addPersonRole(name, rate, type);
+    }
+
+    function setSubmitButtonState(isSubmitting) {
+      var submitBtn = document.querySelector('.submit-btn');
+      if (isSubmitting) {
+        submitBtn.disabled = true;
+        submitBtn.style.background = '#6c757d';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.textContent = 'Submitting...';
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.style.background = '#007bff';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.textContent = 'Submit Entry';
+      }
+    }
+
+    document.getElementById('entryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      console.log('Form submitted');
+
+      var selectedPeople = getSelectedPeople();
+      var differentHours = document.getElementById('differentHoursToggle').checked;
+      var customDates = document.getElementById('customDatesToggle').checked;
+
+      if (selectedPeople.length === 0) {
+        showMessage('Please select at least one resource', 'error');
+        return;
+      }
+
+      var taskItems = document.querySelectorAll('.task-item');
+      var tasks = [];
+
+      for (var i = 0; i < taskItems.length; i++) {
+        var taskDiv = taskItems[i];
+        var taskName = taskDiv.querySelector('.task-name').value.trim();
+        var baseStartDate = taskDiv.querySelector('.task-start-date').value;
+        var baseEndDate = taskDiv.querySelector('.task-end-date').value;
+        var taskId = taskDiv.dataset.taskId;
+        var projectYears = getSelectedYearsForTask(taskId);
+
+        if (!taskName) {
+          showMessage('Please enter a name for all tasks', 'error');
+          return;
+        }
+
+        if (!baseStartDate || !baseEndDate) {
+          showMessage('Please enter start and end dates for all tasks', 'error');
+          return;
+        }
+
+        if (projectYears.length === 0) {
+          showMessage('Please select at least one project year for task: ' + taskName, 'error');
+          return;
+        }
+
+        var taskData = {
+          id: taskId,
+          task: taskName,
+          startDate: baseStartDate,
+          endDate: baseEndDate,
+          projectYears: projectYears
+        };
+
+        if (customDates) {
+          taskData.yearDates = {};
+          for (var y = 0; y < projectYears.length; y++) {
+            var year = projectYears[y];
+            var yearStartInput = taskDiv.querySelector('.year-start-date[data-year="' + year + '"]');
+            var yearEndInput = taskDiv.querySelector('.year-end-date[data-year="' + year + '"]');
+
+            if (yearStartInput && yearEndInput) {
+              taskData.yearDates[year] = {
+                startDate: yearStartInput.value || baseStartDate,
+                endDate: yearEndInput.value || baseEndDate
+              };
+            }
+          }
+        }
+
+        tasks.push(taskData);
+      }
+
+      if (tasks.length === 0) {
+        showMessage('Please add at least one task/deliverable', 'error');
+        return;
+      }
+
+      var escalationPercentage = parseFloat(document.getElementById('escalation').value);
+
+      if (isNaN(escalationPercentage)) {
+        showMessage('Please select an escalation percentage', 'error');
+        return;
+      }
+
+      // Collect hours data from the table
+      var hoursData = {};
+      var hoursInputs = document.querySelectorAll('.hours-input');
+
+      for (var i = 0; i < hoursInputs.length; i++) {
+        var input = hoursInputs[i];
+        var personId = input.dataset.personId;
+        var taskId = input.dataset.taskId;
+        var year = input.dataset.year;
+        var hours = input.value ? parseFloat(input.value) : '';
+
+        if (!hoursData[personId]) hoursData[personId] = {};
+        if (!hoursData[personId][taskId]) hoursData[personId][taskId] = {};
+        hoursData[personId][taskId][year] = hours;
+      }
+
+      // Prepare selectedPeople with hours data
+      var peopleWithHours = [];
+      for (var i = 0; i < selectedPeople.length; i++) {
+        var person = selectedPeople[i];
+        peopleWithHours.push({
+          person: person.person,
+          rate: person.rate,
+          id: person.id,
+          type: person.type,
+          hoursData: hoursData[person.id] || {}
+        });
+      }
+
+      var formData = {
+        milestone: document.getElementById('milestone').value,
+        tasks: tasks,
+        escalationPercentage: escalationPercentage,
+        notes: document.getElementById('notes').value,
+        selectedPeople: peopleWithHours,
+        differentHours: differentHours,
+        customDates: customDates
+      };
+
+      console.log('Submitting form data:', formData);
+
+      setSubmitButtonState(true);
+
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(onError)
+        .submitFormData(formData);
+    });
+
+    function onSuccess(result) {
+      setSubmitButtonState(false);
+
+      if (result.success) {
+        showMessage('Success! Added ' + result.rowsAdded + ' row(s) to the sheet.', 'success');
+
+        savedEscalation = document.getElementById('escalation').value;
+
+        document.getElementById('entryForm').reset();
+
+        var checkboxes = document.querySelectorAll('#peopleSelection input[type="checkbox"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+          checkboxes[i].checked = false;
+        }
+
+        document.getElementById('differentHoursToggle').checked = false;
+        document.getElementById('customDatesToggle').checked = false;
+
+        var container = document.getElementById('tasksContainer');
+        container.innerHTML = '';
+        taskCounter = 0;
+        addTaskItem();
+
+        document.getElementById('hoursTableContainer').style.display = 'none';
+
+        if (savedEscalation !== null && savedEscalation !== undefined) {
+          document.getElementById('escalation').value = savedEscalation;
+        }
+      } else {
+        showMessage('Error: ' + result.error, 'error');
+      }
+    }
+
+    function onError(error) {
+      console.error('Error:', error);
+      setSubmitButtonState(false);
+      showMessage('Error: ' + error.message, 'error');
+    }
+
+    function showMessage(msg, type) {
+      var messageDiv = document.getElementById('message');
+      messageDiv.textContent = msg;
+      messageDiv.className = type;
+      messageDiv.style.display = 'block';
+      setTimeout(function() {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
